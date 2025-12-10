@@ -1,2 +1,2 @@
-lark>=1.1.5
-pytest>=7.4.0
+lark
+pytest
