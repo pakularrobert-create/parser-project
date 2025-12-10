@@ -1,0 +1,69 @@
+// TaskFlow Grammar
+
+start: task_def+
+
+task_def: "task" NAME "{" task_body "}"
+
+task_body: task_option* statement*
+
+task_option: priority_opt
+           | depends_opt
+
+priority_opt: "priority" ":" PRIORITY_LEVEL
+PRIORITY_LEVEL: "high" | "medium" | "low"
+
+depends_opt: "depends" ":" "[" name_list? "]"
+name_list: NAME ("," NAME)*
+
+statement: var_decl
+         | if_stmt
+         | repeat_stmt
+         | while_stmt
+         | run_stmt
+         | log_stmt
+         | assignment
+
+var_decl: "let" NAME "=" expression
+
+assignment: NAME "=" expression
+
+if_stmt: "if" expression "{" statement* "}" else_clause?
+else_clause: "else" "{" statement* "}"
+
+repeat_stmt: "repeat" expression "times" "{" statement* "}"
+
+while_stmt: "while" expression "{" statement* "}"
+
+run_stmt: "run" STRING
+
+log_stmt: "log" expression
+
+expression: or_expr
+
+or_expr: and_expr ("or" and_expr)*
+and_expr: not_expr ("and" not_expr)*
+not_expr: "not" not_expr | comparison
+comparison: additive (COMP_OP additive)?
+COMP_OP: "==" | "!=" | "<" | ">" | "<=" | ">="
+additive: multiplicative (("+"|"-") multiplicative)*
+multiplicative: unary (("*"|"/"|"%") unary)*
+unary: "-" unary | primary
+
+primary: NUMBER
+       | STRING
+       | bool_literal
+       | NAME
+       | "(" expression ")"
+       | list_expr
+
+bool_literal: "true" | "false"
+
+list_expr: "[" (expression ("," expression)*)? "]"
+
+NAME: /[a-zA-Z_][a-zA-Z0-9_]*/
+NUMBER: /[0-9]+(\.[0-9]+)?/
+STRING: /"[^"]*"/
+
+%import common.WS
+%ignore WS
+%ignore /\/\/.*/   // Single line comments
