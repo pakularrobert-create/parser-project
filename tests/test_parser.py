@@ -105,7 +105,7 @@ class TestTaskFlowParser:
             parser.parse_file(invalid_dir / "syntax_error.tf")
     
     def test_missing_expression(self, parser, invalid_dir):
-        """Test 10: Detect missing expression."""
+        """Test 10: Detect missing assignment expression."""
         with pytest.raises((TaskFlowError, Exception)):
             parser.parse_file(invalid_dir / "missing_semicolon.tf")
     
